@@ -1,0 +1,444 @@
+app:
+  description: 用大模型实现对文档格式的调整
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 文档格式化DEMO
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: package
+  value:
+    plugin_unique_identifier: bowenliang123/md_exporter:0.3.0@079e806d58d51ba4d7bdde88dde388db939f5d2d92023bac15495fa21a153182
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openrouter:0.0.7@c7d9867337da290e42a09410d8a51a797351d354e199bac0cb16046d927a283c
+kind: app
+version: 0.1.5
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1742813964892-source-1742867774659-target
+      selected: false
+      source: '1742813964892'
+      sourceHandle: source
+      target: '1742867774659'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 1742867774659-source-1742827925000-target
+      selected: false
+      source: '1742867774659'
+      sourceHandle: source
+      target: '1742827925000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: end
+      id: 1742883329199-source-1742831275274-target
+      selected: false
+      source: '1742883329199'
+      sourceHandle: source
+      target: '1742831275274'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1742813964892-source-1744641138635-target
+      selected: false
+      source: '1742813964892'
+      sourceHandle: source
+      target: '1744641138635'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1744641138635-source-1744641049482-target
+      source: '1744641138635'
+      sourceHandle: source
+      target: '1744641049482'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1742827925000-source-1744641049482-target
+      source: '1742827925000'
+      sourceHandle: source
+      target: '1744641049482'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: tool
+      id: 1744641049482-source-1742883329199-target
+      source: '1744641049482'
+      sourceHandle: source
+      target: '1742883329199'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 放入文档，并指定目标格式
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          label: 上传文档
+          max_length: 48
+          options: []
+          required: true
+          type: file
+          variable: user_files
+        - label: 格式指令
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: demand_format
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          label: 参考文件
+          max_length: 1
+          options: []
+          required: true
+          type: file
+          variable: refer
+      height: 170
+      id: '1742813964892'
+      position:
+        x: 30
+        y: 285
+      positionAbsolute:
+        x: 30
+        y: 285
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1742813964892'
+          - user_files
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: google/gemma-3-12b-it:free
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: 2f8442ee-2a7d-4d1c-aa49-1a984f34fbd2
+          role: system
+          text: "# 角色与任务\n你是一个**西财论文全自动格式校正引擎**，需按以下规则处理文档：\n\n---\n## 优先级逻辑\n1️⃣\
+            \ **用户显式指令**（如“正文字体改为楷体”）→ 2️⃣ **西财强制规范**（如字数/装订顺序）→ 3️⃣ **学术通用标准**（如APA引用）\n\
+            \n---\n## 格式处理规则（Markdown → Word 兼容性强化）\n### 一、结构要件处理\n**强制验证顺序**：  \n\
+            封面 → 声明 → 中英文摘要 → 关键词 → 目录 → 前言 → 正文 → 注释&参考文献 → 附录 → 后记 → 致谢 → 科研成果目录\
+            \  \n- **缺失处理**：  \n  ✅ 若检测到缺失章节（如无声明页），插入标记：  \n  `<!-- MISSING_SECTION:\
+            \ 声明页 (请从附件3补充) -->`  \n  ✅ 目录必须为二级标题（`## 目录`），子项用 `-` 列表（禁止使用三级标题）\n\n\
+            ### 二、文本样式映射表\n| 西财规范              | Markdown 语法                 | Word\
+            \ 映射规则               |  \n|----------------------|-----------------------------|---------------------------|\
+            \  \n| 正文-小四宋体          | 无标记                       | 样式「正文」/12pt/宋体 \
+            \      |  \n| 一级标题-2号小标宋      | `# 标题`                    | 样式「标题1」/22pt/小标宋\
+            \     |  \n| 表格标题-黑体          | `**表1:** 标题`              | 表格属性设置标题样式\
+            \          |  \n| 注释-脚注             | `[^1]: 作者. 篇名...`        | 插入Word脚注\
+            \                |  \n\n### 三、自动化修复协议\n#### 1. 可自动修复项\n- **标题层级溢出**：检测到\
+            \ `#####` 时，自动转换为加粗正文 `**4.1.1 标题**`  \n- **列表符号混杂**：统一使用 `-`，层级缩进 2 空格（禁用\
+            \ `*` 和数字列表）  \n- **图表格式**：  \n  ```markdown\n  <!-- TABLE_START -->\n\
+            \  | 列1 | 列2 |     → 转换为Word表格（宋体5号）  \n  |-----|-----|  \n  | 数据 | 数据\
+            \ |  \n  <!-- TABLE_END -->  "
+        - edition_type: basic
+          id: 53afcd91-812f-4a22-bfbb-a52119e9293d
+          role: user
+          text: "请根据用户上传的文件{{#1742813964892.user_files#}}和用户要求{{#1742813964892.demand_format#}}，并将要求翻译成对应论文的要求，要求直接说明如“一级标题\
+            \ 二号小标宋”，并直接对文件内容进行修改，其他解释内容不要输出。输出要求：Markdown格式，保留完整结构（如## 二级标题、- 列表项、|表格|）。\n\
+            输出参考格式：\n---\ntitle: 基于Web与AI技术的创新应用探索\nauthor: 张三\nstudent_id: 20230001\n\
+            supervisor: 李教授\ndate: 2023年12月\ngeometry: \"left=3.45cm, right=3.45cm,\
+            \ top=3.9cm, bottom=3.4cm\"\nmainfont: 宋体\nmainfontsize: 12pt\n---\n\n\
+            [//]: # (MISSING_SECTION: 封面页，请从附件1补充)\n\n## 声明\n[//]: # (MISSING_SECTION:\
+            \ 声明页，请从附件3补充)\n\n## 目录\n### 第一章 引言\n#### 1.1 研究背景与意义\n#### 1.2 国内外研究现状\n\
+            #### 1.3 研究目标与方法\n\n### 第二章 文献综述\n#### 2.1 Web技术在交互式体验设计中的应用\n#### 2.2\
+            \ AR/VR技术在文化展示中的应用\n\n## 正文\n### 第一章 引言\n#### 1.1 研究背景与意义\n正文内容...\n\n\
+            **表格示例：**\n<!-- TABLE_START -->\n| 技术       | 用途                 |\n|------------|----------------------|\n\
+            | Phaser.js  | 网页游戏开发         |\n| After Effects | 动画流程图制作     |\n<!--\
+            \ TABLE_END -->\n\n## 参考文献\n1. 作者. 书名[M]. 出版社, 出版年.  \n2. 作者. 篇名[J]. 期刊名,\
+            \ 年份, 卷(期): 页码.  \n\n"
+        selected: false
+        title: LLM 2
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1742827925000'
+      position:
+        x: 613.0292056089729
+        y: 397
+      positionAbsolute:
+        x: 613.0292056089729
+        y: 397
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1742883329199'
+          - files
+          variable: files
+        selected: false
+        title: 结束
+        type: end
+      height: 90
+      id: '1742831275274'
+      position:
+        x: 1550
+        y: 285
+      positionAbsolute:
+        x: 1550
+        y: 285
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        is_array_file: false
+        selected: false
+        title: 文档提取器
+        type: document-extractor
+        variable_selector:
+        - '1742813964892'
+        - user_files
+      height: 92
+      id: '1742867774659'
+      position:
+        x: 334
+        y: 397
+      positionAbsolute:
+        x: 334
+        y: 397
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        is_team_authorization: true
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Markdown text
+            ja_JP: Markdown text
+            pt_BR: Markdown text
+            zh_Hans: Markdown格式文本
+          label:
+            en_US: Markdown text
+            ja_JP: Markdown text
+            pt_BR: Markdown text
+            zh_Hans: Markdown格式文本
+          llm_description: ''
+          max: null
+          min: null
+          name: md_text
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        params:
+          md_text: ''
+        provider_id: bowenliang123/md_exporter/md_exporter
+        provider_name: bowenliang123/md_exporter/md_exporter
+        provider_type: builtin
+        selected: false
+        title: Markdown转Docx文件
+        tool_configurations: {}
+        tool_label: Markdown转Docx文件
+        tool_name: md_to_docx
+        tool_parameters:
+          md_text:
+            type: mixed
+            value: '{{#1744641049482.text#}}'
+        type: tool
+      height: 54
+      id: '1742883329199'
+      position:
+        x: 1246
+        y: 285
+      positionAbsolute:
+        x: 1246
+        y: 285
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1744641138635'
+          - text
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek/deepseek-r1-zero:free
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: 7260ea86-d43f-47f8-9a67-adadb49ea4b0
+          role: system
+          text: "请参考格式要求{{#1744641138635.text#}}对{{#1742827925000.text#}}内容格式进行修改，其他解释内容不要输出。输出要求：Markdown格式，保留完整结构（如##\
+            \ 二级标题、- 列表项、|表格|）。在此过程中，如果发现模板中要求的某些内容缺失，需要在对应位置添加明确的提醒文本，例如“此处内容缺失，请补充”，若存在不能更改的样式，请显示地输出对应样式来提醒用户自己更改，最终以\
+            \ Markdown 格式输出。 \n"
+        selected: true
+        title: LLM 3
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1744641049482'
+      position:
+        x: 880.867652199373
+        y: 275.3506763081043
+      positionAbsolute:
+        x: 880.867652199373
+        y: 275.3506763081043
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1742813964892'
+          - refer
+        desc: ''
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek/deepseek-r1-zero:free
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: 7fb53197-60e7-49ee-b972-81f08dcf8d46
+          role: system
+          text: “请分析以下文档内容{{#1742813964892.refer#}}，总结文档里面的 结构层次关系（标题层级如一级标题 / 二级标题及其嵌套关系、列表嵌套如有序列表子项缩进）、间距信息（段落间距
+            / 行间距 / 页边距的具体数值或描述）、字体样式（字体名称如宋体 / Times New Roman、字号如小四 / 二号、字形如加粗 /
+            斜体 / 下划线）并以 要求的提示词输出“
+        selected: false
+        title: LLM 1
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1744641138635'
+      position:
+        x: 503.21287025665146
+        y: 263.6484356214412
+      positionAbsolute:
+        x: 503.21287025665146
+        y: 263.6484356214412
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: -219.05937186208678
+      y: 20.770970351499727
+      zoom: 0.7000000000000003
